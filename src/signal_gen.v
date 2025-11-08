@@ -28,6 +28,14 @@ module signal_generator (
     wire noise;
     wire [7:0] mix_level;
 
+    assign debug[0] = waveA;
+    assign debug[1] = waveB;
+    assign debug[2] = noise;
+    assign debug[3] = enableA;
+    assign debug[4] = enableB;
+    assign debug[5] = enableN;
+    assign debug[6] = mix_level[0];
+
     tonegen tA (.clk(clk), .period(periodA), .enable(enableA), .rst(1'b0), .wave(waveA));
     tonegen tB (.clk(clk), .period(periodB), .enable(enableB), .rst(1'b0), .wave(waveB));
 
@@ -60,15 +68,6 @@ module signal_generator (
                 default: ;
             endcase
         end
-
-        assign debug[0] = waveA;
-        assign debug[1] = waveB;
-        assign debug[2] = noise;
-        assign debug[3] = enableA;
-        assign debug[4] = enableB;
-        assign debug[5] = enableN;
-        assign debug[6] = mix_level[0];
-
     end
     
 endmodule
