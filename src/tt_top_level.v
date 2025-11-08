@@ -21,6 +21,6 @@ signal_generator signal_gen (
 );
 
 assign uio_oe = 8'b00000001;
-assign uio_out[7:0] = 7'b0000000;
+assign uio_out[7:0] = 8'b00000000;
 
 endmodule

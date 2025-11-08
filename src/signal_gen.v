@@ -8,6 +8,7 @@ module signal_generator (
     input write_strobe,     // strobe that controls register updates
     input [2:0] address,    // addressbus
     input [4:0] data,       // databus
+    input rst,              // reset
     
     output signal_out,      // output for the audio signal
     output[6:0] debug       // debug-outputs
@@ -36,10 +37,10 @@ module signal_generator (
     assign debug[5] = enableN;
     assign debug[6] = mix_level[0];
 
-    tonegen tA (.clk(clk), .period(periodA), .enable(enableA), .rst(1'b0), .wave(waveA));
-    tonegen tB (.clk(clk), .period(periodB), .enable(enableB), .rst(1'b0), .wave(waveB));
+    tonegen tA (.clk(clk), .period(periodA), .enable(enableA), .rst(rst), .wave(waveA));
+    tonegen tB (.clk(clk), .period(periodB), .enable(enableB), .rst(rst), .wave(waveB));
 
-    lfsr n (.clk(clk), .rst(1'b0), .en_step(enableN), .noise_out(noise));
+    lfsr n (.clk(clk), .rst(rst), .en_step(enableN), .noise_out(noise));
 
     mixer mix (
         .waveA(waveA), 
@@ -54,7 +55,7 @@ module signal_generator (
         .mixout(mix_level)
     );
 
-    pwm8 pwm (.clk(clk), .duty_cycle(mix_level), .pwm_o(signal_out));
+    pwm8 pwm (.clk(clk), .duty_cycle(mix_level), .pwm_o(signal_out), .rst(rst));
 
     always @(posedge clk) begin
         if (write_strobe) begin
