@@ -17,7 +17,8 @@ signal_generator signal_gen (
     .address(ui_in[2:0]),
     .data(ui_in[7:3]),
     .signal_out(uo_out[0]),
-    .debug(uo_out[7:1])
+    .debug(uo_out[7:1]),
+    .rst(~rst_n)
 );
 
 assign uio_oe = 8'b00000001;
