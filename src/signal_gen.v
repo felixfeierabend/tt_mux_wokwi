@@ -3,6 +3,7 @@
 // `include "./mixer.v"
 // `include "./pwm8.v"
 // `include "./vibrato.v"
+// `include "./adsr.v"
 
 module signal_generator (
     input clk,              // clock 
@@ -30,8 +31,11 @@ module signal_generator (
     wire waveB;
     wire noise;
     wire [7:0] mix_level;
-    wire [3:0] vibA;
 
+    wire[3:0] envA;
+    wire[3:0] envB;
+
+    wire [3:0] vibA;
     reg [3:0] vib_depth = 4'd4;
     reg [7:0] vib_speed = 8'd50;
 
@@ -48,6 +52,26 @@ module signal_generator (
     tonegen tA (.clk(clk), .period(periodA + {8'b0, vibA}), .enable(enableA), .rst(rst), .wave(waveA));
     tonegen tB (.clk(clk), .period(periodB), .enable(enableB), .rst(rst), .wave(waveB));
 
+    adsr envA_gen (
+        .clk_i(clk),
+        .enable_i(enableA),
+        .attack_i(4'd2), 
+        .decay_i(4'd2),
+        .sustain_i(4'd8),
+        .release_i(4'd3),
+        .level_o(envA)
+    );
+
+    adsr envB_gen (
+        .clk_i(clk),
+        .enable_i(enableB),
+        .attack_i(4'd2), 
+        .decay_i(4'd2),
+        .sustain_i(4'd8),
+        .release_i(4'd3),
+        .level_o(envB)
+    );
+
     lfsr n (.clk(clk), .rst(rst), .en_step(enableN), .noise_out(noise));
 
     mixer mix (
@@ -60,7 +84,9 @@ module signal_generator (
         .enableA(enableA),
         .enableB(enableB),
         .enableNoise(enableN),
-        .mixout(mix_level)
+        .mixout(mix_level),
+        .envA(envA),
+        .envB(envB)
     );
 
     pwm8 pwm (.clk(clk), .duty_cycle(mix_level), .pwm_o(signal_out), .rst(rst));
