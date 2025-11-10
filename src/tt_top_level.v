@@ -13,6 +13,8 @@ module tt_um_felixfeierabend (
 );
 
 wire clk_scaled;
+wire signal_bit;
+wire [6:0] debug_bits;
 
 clock_scale clk_scaler (
     .clk(clk),
@@ -26,11 +28,12 @@ signal_generator signal_gen (
     .write_strobe(uio_in[0]),
     .address(ui_in[2:0]),
     .data(ui_in[7:3]),
-    .signal_out(uo_out[0]),
-    .debug(uo_out[7:1]),
+    .signal_out(signal_bit),
+    .debug(debug_bits),
     .rst(~rst_n)
 );
 
+assign uo_out = {debug_bits, signal_bit};
 assign uio_oe = 8'b00000001;
 assign uio_out[7:0] = 8'b00000000;
 
