@@ -39,13 +39,15 @@ module signal_generator (
     reg [3:0] vib_depth = 4'd4;
     reg [7:0] vib_speed = 8'd50;
 
-    assign debug[0] = waveA;
-    assign debug[1] = waveB;
+    wire signal_raw;
+
+    assign debug[0] = (^waveA === 1'bx) ? 1'b0 : waveA;
+    assign debug[1] = (^waveB === 1'bx) ? 1'b0 : waveB;
     assign debug[2] = noise;
     assign debug[3] = enableA;
     assign debug[4] = enableB;
     assign debug[5] = enableN;
-    assign debug[6] = mix_level[0];
+    assign debug[6] = clk;
 
     vibrato vibA_gen (.clk(clk), .enable(enableVib), .depth(vib_depth), .speed(vib_speed), .vibrato_o(vibA));
 
@@ -75,6 +77,8 @@ module signal_generator (
     lfsr n (.clk(clk), .rst(rst), .en_step(enableN), .noise_out(noise));
 
     mixer mix (
+        .clk(clk),
+        .rst(rst),
         .waveA(waveA), 
         .waveB(waveB), 
         .noise(noise), 
@@ -89,7 +93,9 @@ module signal_generator (
         .envB(envB)
     );
 
-    pwm8 pwm (.clk(clk), .duty_cycle(mix_level), .pwm_o(signal_out), .rst(rst));
+    pwm8 pwm (.clk(clk), .duty_cycle(mix_level), .pwm_o(signal_raw), .rst(rst));
+
+    assign signal_out = (^signal_raw === 1'bx) ? 1'b0 : signal_raw;
 
     always @(posedge clk) begin
         if (write_strobe) begin
@@ -108,5 +114,5 @@ module signal_generator (
             endcase
         end
     end
-    
+
 endmodule

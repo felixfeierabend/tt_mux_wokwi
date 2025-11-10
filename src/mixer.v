@@ -1,4 +1,6 @@
 module mixer (
+    input clk,
+    input rst,
     input waveA,                // Channel A
     input waveB,                // Channel B
     input noise,                // LFSR-Input
@@ -14,21 +16,43 @@ module mixer (
     input enableB,              // Enable Channel B
     input enableNoise,          // Enable Noise-Channel
 
-    output[7:0] mixout          // Mixer output for PWM
+    output reg [7:0] mixout          // Mixer output for PWM
 );
+    
+    reg [7:0] multA, multB;
+    reg [4:0] a_val, b_val, n_val;
+    reg [5:0] sum;
 
-    wire[7:0] multA = volumeA * envA;
-    wire[7:0] multB = volumeB * envB;
+    reg started = 0;
 
-    // Calculate Values for channels
-    wire[4:0] a_val = (enableA && waveA) ? multA[7:3] : 0;
-    wire[4:0] b_val = (enableB && waveB) ? multB[7:3] : 0;
-    wire[4:0] noise_val = (enableNoise && noise) ? {volumeNoise, 1'b0} : 0;
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            multA <= 8'd0;
+            multB <= 8'd0;
+            a_val <= 5'd0;
+            b_val <= 5'd0;
+            n_val <= 5'd0;
+            sum <= 6'd0;
+            mixout <= 8'd0;
+            started <= 1'b0;
 
-    // sum channels for output
-    wire[5:0] sum = a_val + b_val + noise_val;
+        end else begin
 
-    // scale sum up to 8 bit
-    assign mixout = {sum, 2'b00};
+            if (!started) begin
+                started <= 1'b1;
+                mixout <= 8'd0;
+            end else begin
+                multA <= volumeA * envA;
+                multB <= volumeB * envB;
+
+                a_val <= (enableA && waveA) ? multA[7:3] : 5'd0;
+                b_val <= (enableB && waveB) ? multB[7:3] : 5'd0;
+                n_val <= (enableNoise && noise) ? {volumeNoise, 1'b0} : 5'd0;
+
+                sum <= a_val + b_val + n_val;
+                mixout <= {sum, 2'b00};
+            end
+        end
+    end
     
 endmodule

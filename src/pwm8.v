@@ -9,10 +9,11 @@ module pwm8 (
     always @(posedge clk) begin
         if (rst) begin
             clk_cnt <= 1'b0;
+            pwm_o <= 0;
         end else begin
             clk_cnt <= clk_cnt + 1;
+            pwm_o <= (clk_cnt < duty_cycle) ? 1'b1 : 1'b0;     // pwm is 1 if clk_cnt is less than duty cycle, 0 otherwise
         end
-        pwm_o <= (clk_cnt < duty_cycle);     // pwm is 1 if clk_cnt is less than duty cycle, 0 otherwise
     end
     
 endmodule
