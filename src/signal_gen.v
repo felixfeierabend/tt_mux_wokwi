@@ -43,8 +43,10 @@ module signal_generator (
 
     wire signal_raw;
 
-    assign debug[0] = (^waveA === 1'bx) ? 1'b0 : waveA;
-    assign debug[1] = (^waveB === 1'bx) ? 1'b0 : waveB;
+    // assign debug[0] = (^waveA === 1'bx) ? 1'b0 : waveA;
+    // assign debug[1] = (^waveB === 1'bx) ? 1'b0 : waveB;
+    assign debug[0] = 0;
+    assign debug[1] = 0;
     assign debug[2] = noise;
     assign debug[3] = enableA;
     assign debug[4] = enableB;
@@ -97,7 +99,8 @@ module signal_generator (
 
     pwm8 pwm (.clk(clk), .duty_cycle(mix_level), .pwm_o(signal_raw), .rst(rst));
 
-    assign signal_out = (^signal_raw === 1'bx) ? 1'b0 : signal_raw;
+    // assign signal_out = (^signal_raw === 1'bx) ? 1'b0 : signal_raw;
+    assign signal_out = signal_raw;
 
     always @(posedge clk) begin
         if (write_strobe) begin
