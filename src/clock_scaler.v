@@ -7,7 +7,7 @@ module clock_scale (
 );
     reg[11:0] counter = 0;
 
-    always @(posedge(clk) or posedge(rst)) begin
+    always @(posedge(clk)) begin
         if (en) begin
             if (rst) begin
                 counter <= 10'd0;

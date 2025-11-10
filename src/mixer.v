@@ -25,7 +25,7 @@ module mixer (
 
     reg started = 0;
 
-    always @(posedge clk or posedge rst) begin
+    always @(posedge clk) begin
         if (rst) begin
             multA <= 8'd0;
             multB <= 8'd0;
