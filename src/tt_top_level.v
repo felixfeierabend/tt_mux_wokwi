@@ -25,8 +25,8 @@ clock_scale clk_scaler (
 
 signal_generator signal_gen (
     .clk(clk_scaled),
-    .write_strobe(uio_in[0]),
-    .address(ui_in[2:0]),
+    .write_strobe(ui_in[0]),
+    .address(uio_in[2:0]),
     .data(ui_in[7:3]),
     .signal_out(signal_bit),
     .debug(debug_bits),
@@ -34,7 +34,7 @@ signal_generator signal_gen (
 );
 
 assign uo_out = {debug_bits, signal_bit};
-assign uio_oe = 8'b00000001;
+assign uio_oe = 8'b00000111;
 assign uio_out[7:0] = 8'b00000000;
 
 endmodule
