@@ -34,6 +34,12 @@ signal_generator signal_gen (
     .rst(~rst_n)
 );
 
+`ifndef SYNTHESIS
+assign uo_out = (^ {debug_bus, signal_bit} === 1'bx) ? 8'h00 : {debug_bus, signal_bit};
+`else
+assign uo_out = {debug_bus, signal_raw};
+`endif
+
 assign uo_out = {debug_bits, signal_bit};
 assign uio_oe = 8'b00000111;
 assign uio_out[7:0] = 8'b00000000;
