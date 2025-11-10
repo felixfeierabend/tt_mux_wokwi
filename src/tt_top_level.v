@@ -1,5 +1,5 @@
-// `include "./signal_gen.v"
-// `include "./clock_scaler.v"
+`include "./signal_gen.v"
+`include "./clock_scaler.v"
 
 module tt_um_felixfeierabend (
     input  wire [7:0] ui_in,    // Dedicated inputs
@@ -35,9 +35,9 @@ signal_generator signal_gen (
 );
 
 `ifndef SYNTHESIS
-assign uo_out = (^ {debug_bus, signal_bit} === 1'bx) ? 8'h00 : {debug_bus, signal_bit};
+assign uo_out = (^ {debug_bits, signal_bit} === 1'bx) ? 8'h00 : {debug_bits, signal_bit};
 `else
-assign uo_out = {debug_bus, signal_raw};
+assign uo_out = {debug_bits, signal_raw};
 `endif
 
 assign uo_out = {debug_bits, signal_bit};
