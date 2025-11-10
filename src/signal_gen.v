@@ -99,7 +99,7 @@ module signal_generator (
 
     pwm8 pwm (.clk(clk), .duty_cycle(mix_level), .pwm_o(signal_raw), .rst(rst));
 
-    assign signal_out = (^signal_raw === 1'bx) ? 1'b0 : signal_raw;
+    // assign signal_out = (^signal_raw === 1'bx) ? 1'b0 : signal_raw;
     assign signal_out = signal_raw;
 
     always @(posedge clk) begin
