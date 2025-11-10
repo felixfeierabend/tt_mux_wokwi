@@ -1,4 +1,5 @@
-// `include "signal_gen.v"
+// `include "./signal_gen.v"
+// `include "./clock_scaler.v"
 
 module tt_um_felixfeierabend (
     input  wire [7:0] ui_in,    // Dedicated inputs
@@ -11,8 +12,17 @@ module tt_um_felixfeierabend (
     input  wire       rst_n     // reset_n - low to reset
 );
 
-signal_generator signal_gen (
+wire clk_scaled;
+
+clock_scale clk_scaler (
     .clk(clk),
+    .rst(~rst_n),
+    .scale_factor(11'd50),
+    .clk_out(clk_scaled)
+);
+
+signal_generator signal_gen (
+    .clk(clk_scaled),
     .write_strobe(uio_in[0]),
     .address(ui_in[2:0]),
     .data(ui_in[7:3]),

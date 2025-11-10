@@ -27,13 +27,13 @@ module signal_generator (
     reg enableN = 1;
     reg enableVib = 1;
 
-    wire waveA;
-    wire waveB;
-    wire noise;
+    wire waveA = 1;
+    wire waveB = 1;
+    wire noise = 1;
     wire [7:0] mix_level;
 
-    wire[3:0] envA;
-    wire[3:0] envB;
+    wire[3:0] envA = 0;
+    wire[3:0] envB = 0;
 
     wire [3:0] vibA;
     reg [3:0] vib_depth = 4'd4;
